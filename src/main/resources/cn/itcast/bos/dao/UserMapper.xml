@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- namespace名称空间 确保语句 唯一 -->
+<mapper namespace="cn.itcast.bos.dao.UserDAO">
+	<!-- 如果表列名 和 属性名 完全一致，省略resultMap -->
+	
+	<!-- parameterType 传入语句参数类型  -->
+	<!-- 插入 -->
+	<insert id="insert" parameterType="User">
+		insert into t_user(id,username,password) values(#{id},#{username},#{password})
+	</insert>
+	
+	<!-- 用户登录查询 -->
+	<select id="login" resultType="User">
+		select * from t_user where username=#{username} and password =#{password}
+	</select>
+	
+	<!-- 修改密码 -->
+	<update id="updatePassword" parameterType="User">
+		update t_user set password = #{password} where id = #{id}
+	</update>
+	
+</mapper>

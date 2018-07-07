@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.bos.dao.RegionDAO" >
+  <resultMap id="RegionResultMap" type="cn.itcast.bos.domain.Region" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+    <result column="CITY" property="city" jdbcType="VARCHAR" />
+    <result column="DISTRICT" property="district" jdbcType="VARCHAR" />
+    <result column="POSTCODE" property="postcode" jdbcType="VARCHAR" />
+    <result column="SHORTCODE" property="shortcode" jdbcType="VARCHAR" />
+    <result column="CITYCODE" property="citycode" jdbcType="VARCHAR" />
+  </resultMap>
+   <!-- 查询记录总数 -->
+  <select id="findTotalCount" parameterType="java.lang.String" resultType="int">
+  	 select count(*) from bc_region
+  </select>
+  
+  <!-- 查询当前页数据 -->
+  <select id="findPaginationData" resultMap="RegionResultMap">
+  	<![CDATA[
+		 select * from (select t.*,rownum RN from bc_region t where rownum <= #{last}) where RN > #{first}
+  	]]>
+  </select>
+  
+   <!-- 批量插入 -->
+  <insert id="insertBatch" parameterType="java.util.List"> 
+  	insert into BJ0825.BC_REGION (ID, PROVINCE, CITY, 
+      DISTRICT, POSTCODE, SHORTCODE, 
+      CITYCODE)
+    <foreach collection="list" item="region" separator="union">
+    	select #{region.id},#{region.province},#{region.city},#{region.district},#{region.postcode},#{region.shortcode},#{region.citycode} from dual
+    </foreach>
+  </insert>
+  
+  <!-- 查询所有区域 -->
+  <select id="findAll" resultMap="RegionResultMap">
+  	select <include refid="Base_Column_List" />  from bc_region 
+  </select>
+  
+  <!-- 根据条件查询 -->
+  <select id="findRegionsByCondition" parameterType="java.lang.String" resultMap="RegionResultMap">
+  	select <include refid="Base_Column_List" />  from bc_region where 
+  		province like '%'||#{q}||'%' or 
+  		city like '%'||#{q}||'%' or
+  		district like '%'||#{q}||'%' 
+  		
+  </select>
+  
+  <sql id="Base_Column_List" >
+    ID, PROVINCE, CITY, DISTRICT, POSTCODE, SHORTCODE, CITYCODE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="RegionResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from BJ0825.BC_REGION
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BJ0825.BC_REGION
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="cn.itcast.bos.domain.Region" >
+    insert into BJ0825.BC_REGION (ID, PROVINCE, CITY, 
+      DISTRICT, POSTCODE, SHORTCODE, 
+      CITYCODE)
+    values (#{id,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{district,jdbcType=VARCHAR}, #{postcode,jdbcType=VARCHAR}, #{shortcode,jdbcType=VARCHAR}, 
+      #{citycode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.itcast.bos.domain.Region" >
+    insert into BJ0825.BC_REGION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="province != null" >
+        PROVINCE,
+      </if>
+      <if test="city != null" >
+        CITY,
+      </if>
+      <if test="district != null" >
+        DISTRICT,
+      </if>
+      <if test="postcode != null" >
+        POSTCODE,
+      </if>
+      <if test="shortcode != null" >
+        SHORTCODE,
+      </if>
+      <if test="citycode != null" >
+        CITYCODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null" >
+        #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="shortcode != null" >
+        #{shortcode,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        #{citycode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.bos.domain.Region" >
+    update BJ0825.BC_REGION
+    <set >
+      <if test="province != null" >
+        PROVINCE = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        CITY = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="district != null" >
+        DISTRICT = #{district,jdbcType=VARCHAR},
+      </if>
+      <if test="postcode != null" >
+        POSTCODE = #{postcode,jdbcType=VARCHAR},
+      </if>
+      <if test="shortcode != null" >
+        SHORTCODE = #{shortcode,jdbcType=VARCHAR},
+      </if>
+      <if test="citycode != null" >
+        CITYCODE = #{citycode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.itcast.bos.domain.Region" >
+    update BJ0825.BC_REGION
+    set PROVINCE = #{province,jdbcType=VARCHAR},
+      CITY = #{city,jdbcType=VARCHAR},
+      DISTRICT = #{district,jdbcType=VARCHAR},
+      POSTCODE = #{postcode,jdbcType=VARCHAR},
+      SHORTCODE = #{shortcode,jdbcType=VARCHAR},
+      CITYCODE = #{citycode,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

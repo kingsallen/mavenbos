@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.bos.dao.StaffDAO" >
+  <resultMap id="StaffResultMap" type="cn.itcast.bos.domain.Staff" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="TELEPHONE" property="telephone" jdbcType="VARCHAR" />
+    <result column="HASPDA" property="haspda" jdbcType="CHAR" />
+    <result column="DELTAG" property="deltag" jdbcType="CHAR" />
+    <result column="STATION" property="station" jdbcType="VARCHAR" />
+    <result column="STANDARD" property="standard" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- 查询记录总数 -->
+  <select id="findTotalCount" parameterType="java.lang.String" resultType="int">
+  	 select count(*) from bc_staff
+  </select>
+  
+  <!-- 查询当前页数据 -->
+  <select id="findPaginationData" resultMap="StaffResultMap">
+  	<![CDATA[
+		 select * from (select t.*,rownum RN from bc_staff t where rownum <= #{last}) where RN > #{first}
+  	]]>
+  </select>
+  
+  <!-- 作废 -->
+  <update id="updateDelTag" parameterType="java.lang.String">
+  	update bc_staff set deltag = '1' where id = #{id}
+  </update>
+  
+  <!-- 批量作废 -->
+  <update id="updateDelTagBatch" parameterType="java.lang.String">
+  	update bc_staff set deltag = '1' where id in 
+  	<foreach collection="array" item="idItem" open="(" separator="," close=")">
+  		#{idItem}  <!-- ( #{idItem},#{idItem},#{idItem},#{idItem} ) -->
+  	</foreach>
+  </update>
+  
+  <!-- 根据id查询 -->
+  <sql id="Base_Column_List" >
+    ID, NAME, TELEPHONE, HASPDA, DELTAG, STATION, STANDARD
+  </sql>
+  <select id="findById" resultMap="StaffResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from BJ0825.BC_STAFF
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <!--查询有效的取派员-->
+  <select id="findAll" resultMap="StaffResultMap">
+    SELECT ID, NAME FROM BC_STAFF WHERE DELTAG = '0'
+  </select>
+  
+  <!-- 修改取派员 -->
+  <update id="update" parameterType="cn.itcast.bos.domain.Staff" >
+    update BJ0825.BC_STAFF
+    set NAME = #{name,jdbcType=VARCHAR},
+      TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      HASPDA = #{haspda,jdbcType=CHAR},
+      DELTAG = #{deltag,jdbcType=CHAR},
+      STATION = #{station,jdbcType=VARCHAR},
+      STANDARD = #{standard,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BJ0825.BC_STAFF
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="cn.itcast.bos.domain.Staff" >
+    insert into BJ0825.BC_STAFF (ID, NAME, TELEPHONE, 
+      HASPDA, DELTAG, STATION, 
+      STANDARD)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
+      #{haspda,jdbcType=CHAR}, #{deltag,jdbcType=CHAR}, #{station,jdbcType=VARCHAR}, 
+      #{standard,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.itcast.bos.domain.Staff" >
+    insert into BJ0825.BC_STAFF
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE,
+      </if>
+      <if test="haspda != null" >
+        HASPDA,
+      </if>
+      <if test="deltag != null" >
+        DELTAG,
+      </if>
+      <if test="station != null" >
+        STATION,
+      </if>
+      <if test="standard != null" >
+        STANDARD,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="haspda != null" >
+        #{haspda,jdbcType=CHAR},
+      </if>
+      <if test="deltag != null" >
+        #{deltag,jdbcType=CHAR},
+      </if>
+      <if test="station != null" >
+        #{station,jdbcType=VARCHAR},
+      </if>
+      <if test="standard != null" >
+        #{standard,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.bos.domain.Staff" >
+    update BJ0825.BC_STAFF
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="haspda != null" >
+        HASPDA = #{haspda,jdbcType=CHAR},
+      </if>
+      <if test="deltag != null" >
+        DELTAG = #{deltag,jdbcType=CHAR},
+      </if>
+      <if test="station != null" >
+        STATION = #{station,jdbcType=VARCHAR},
+      </if>
+      <if test="standard != null" >
+        STANDARD = #{standard,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

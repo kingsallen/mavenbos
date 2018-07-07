@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+  <!-- 指定mysql的驱动包 --> 
+  <classPathEntry location="C:\Documents and Settings\seawind\.m2\repository\com\oracle\ojdbc14\10.2.0.4.0\ojdbc14-10.2.0.4.0.jar" />
+  <context id="bosTables" targetRuntime="MyBatis3">
+
+    <!-- 取消生成的代码注释 -->
+    <commentGenerator><property name="suppressAllComments" value="true" /></commentGenerator>
+	
+	<!-- 连接配置 -->
+    <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+        connectionURL="jdbc:oracle:thin:@localhost:1521:xe"
+        userId="bj0825"
+        password="bj0825">
+    </jdbcConnection>
+	
+	<!-- javaModelGenerator是模型的生成信息，这里将指定这些Java model类的生成路径 -->
+	<javaModelGenerator targetPackage="cn.itcast.bos.domain"  
+            targetProject="D:\work\eclipse\0825workspace\mavenbos\src\main\java">  
+            <property name="trimStrings" value="true" />  
+    </javaModelGenerator>
+	
+	<!-- 生成Mapper 配置文件，给DAO使用 -->
+    <sqlMapGenerator targetPackage="cn.itcast.bos.dao"  targetProject="D:\work\eclipse\0825workspace\mavenbos\src\main\resources">
+    </sqlMapGenerator>
+	
+	<!-- javaClientGenerator是应用接口的生成信息  -->
+<!--     <javaClientGenerator type="XMLMAPPER" targetPackage="cn.itcast.bos.dao"  targetProject="D:\work\eclipse\0825workspace\mavenbos\src\main\java"> -->
+<!--       <property name="enableSubPackages" value="true" /> -->
+<!--     </javaClientGenerator> -->
+
+	<!-- 
+		oracle 使用 schema 对应 用户名称空间
+		mysql 使用 catalog 对应 数据库 
+	 -->
+    <table schema="bj0825" tableName="bc_staff" domainObjectName="Staff" 
+    enableCountByExample="false" 
+    enableDeleteByExample="false" 
+    enableUpdateByExample="false" 
+    selectByExampleQueryId="false" 
+    enableSelectByExample="false"></table>
+    <table schema="bj0825" tableName="bc_region" domainObjectName="Region" enableCountByExample="false" enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" enableSelectByExample="false"></table>
+    <table schema="bj0825" tableName="bc_subarea" domainObjectName="Subarea" enableCountByExample="false" enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" enableSelectByExample="false"></table>
+    <table schema="bj0825" tableName="bc_DecidedZone" domainObjectName="DecidedZone" enableCountByExample="false" enableDeleteByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false" enableSelectByExample="false"></table>
+  </context>
+</generatorConfiguration>
+
+

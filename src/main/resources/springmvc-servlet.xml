@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd ">
+	
+	<!-- 自动扫描包，将使用注解类，映射spring的Bean  -->
+	<context:component-scan base-package="cn.itcast.bos.web" />
+	
+	<!-- 配置结果页面 前缀和后缀 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="10"></property>
+		<property name="prefix" value="/WEB-INF/pages/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+	<!-- 配置哪些是静态资源，缺省Servlet 直接返回 -->
+	<mvc:resources location="/css/" mapping="/css/**"/>
+	<mvc:resources location="/js/" mapping="/js/**"/>
+	<mvc:resources location="/images/" mapping="/images/**"/>
+	<mvc:resources location="/json/" mapping="/json/**"/>
+	
+	<mvc:annotation-driven />
+	
+	<!-- 配置登陆访问拦截器 -->
+	<mvc:interceptors>
+		<!-- 全局拦截器 都拦截 -->
+<!-- 		<bean class="cn.itcast.bos.web.interceptor.LoginInterceptor" /> -->
+		<mvc:interceptor>
+			<!-- 拦截登陆外 所有 .do 路径 -->
+			<mvc:mapping path="/*.do"/>
+			<mvc:exclude-mapping path="/login.do"/>
+			<bean class="cn.itcast.bos.web.interceptor.LoginInterceptor" /> 
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 使用jackson 返回json -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		 <property name="messageConverters">
+		  <list>
+		   <bean
+		    class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+		  </list>
+		 </property>
+	</bean>
+	
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设置上传文件总大小限制 -->
+		<property name="maxUploadSize" value="10000000"></property>
+	</bean>
+	
+	<!-- 配置Excel返回解析器 -->
+	<!-- 将 Controller 业务方法，返回值与一个bean id 匹配，执行Bean 的 视图显示方法 -->
+	<!--<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" >
+		<property name="order" value="8"></property>
+	</bean>
+	<bean id="subareaExcel" class="cn.itcast.bos.web.view.SubareaExcelView"></bean>-->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="8"></property>
+	</bean>
+	<bean id="subareaExcelData" class="cn.itcast.bos.web.view.SubareaExcelDataView"></bean>
+	
+</beans>	

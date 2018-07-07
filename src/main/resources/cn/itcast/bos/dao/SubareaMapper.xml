@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.itcast.bos.dao.SubareaDAO">
+    <resultMap id="SubareaResultMap" type="cn.itcast.bos.domain.Subarea">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="ADDRESSKEY" property="addresskey" jdbcType="VARCHAR"/>
+        <result column="STARTNUM" property="startnum" jdbcType="VARCHAR"/>
+        <result column="ENDNUM" property="endnum" jdbcType="VARCHAR"/>
+        <result column="SINGLE" property="single" jdbcType="CHAR"/>
+        <result column="POSITION" property="position" jdbcType="VARCHAR"/>
+
+        <!--     <result column="DECIDEDZONE_ID" property="decidedzoneId" jdbcType="VARCHAR" /> -->
+        <!--     <result column="REGION_ID" property="regionId" jdbcType="VARCHAR" /> -->
+
+        <!-- 配置关联 区域 、定区
+            association 多对一、一对一
+            collection  一对多、多对多
+        -->
+        <association property="region" column="REGION_ID" javaType="Region"
+                     resultMap="cn.itcast.bos.dao.RegionDAO.RegionResultMap"/>
+        <!-- 	<association property="decidedZone" column="DECIDEDZONE_ID" javaType="DecidedZone" select="cn.itcast.bos.dao.DecidedZoneDAO.findById"/>  -->
+    </resultMap>
+
+    <!-- 有条件查询总数 -->
+    <select id="findTotalCountByCondition" parameterType="cn.itcast.bos.page.PaginationInfo" resultType="int">
+        select count(*) from bc_subarea inner join bc_region on bc_subarea.region_id = bc_region.id
+        <where>
+            <if test="condition.addresskey !=null and condition.addresskey!='' ">
+                and addresskey like '%'||#{condition.addresskey}||'%'
+            </if>
+            <if test="condition.region != null">
+                <if test="condition.region.province != null and condition.region.province!= '' ">
+                    and province like '%'||#{condition.region.province}||'%'
+                </if>
+                <if test="condition.region.city != null and condition.region.city!= '' ">
+                    and city like '%'||#{condition.region.city}||'%'
+                </if>
+                <if test="condition.region.district != null and condition.region.district!= '' ">
+                    and district like '%'||#{condition.region.district}||'%'
+                </if>
+            </if>
+            <if test="condition.decidedZone!=null">
+                <if test="condition.decidedZone.id != null and condition.decidedZone.id!= ''">
+                    and decidedzone_id = #{condition.decidedZone.id}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <!-- 有条件查询本页数据  -->
+    <select id="findPaginationDataByCondition" parameterType="cn.itcast.bos.page.PaginationInfo"
+            resultMap="SubareaResultMap">
+        <![CDATA[
+  	 select 
+  	 	ID, REGION_ID, ADDRESSKEY, STARTNUM, ENDNUM, SINGLE, POSITION, province, city , district
+  	 	from 
+  	 	(select bc_subarea.ID, bc_subarea.REGION_ID, bc_subarea.ADDRESSKEY, bc_subarea.STARTNUM, bc_subarea.ENDNUM, bc_subarea.SINGLE, bc_subarea.POSITION, bc_region.province, bc_region.city, bc_region.district ,rownum RN from bc_subarea inner join bc_region on bc_subarea.region_id = bc_region.id where 1=1 
+  	]]>
+        <if test="condition.addresskey !=null and condition.addresskey!='' ">
+            and addresskey like '%'||#{condition.addresskey}||'%'
+        </if>
+        <if test="condition.region != null">
+            <if test="condition.region.province != null and condition.region.province!= '' ">
+                and province like '%'||#{condition.region.province}||'%'
+            </if>
+            <if test="condition.region.city != null and condition.region.city!= '' ">
+                and city like '%'||#{condition.region.city}||'%'
+            </if>
+            <if test="condition.region.district != null and condition.region.district!= '' ">
+                and district like '%'||#{condition.region.district}||'%'
+            </if>
+        </if>
+        <if test="condition.decidedZone!=null">
+            <if test="condition.decidedZone.id != null and condition.decidedZone.id!= ''">
+                and decidedzone_id = #{condition.decidedZone.id}
+            </if>
+        </if>
+        <![CDATA[
+  		and rownum <= #{last}) where RN > #{first}
+  	  ]]>
+    </select>
+
+    <!-- 条件查询 不分页 -->
+    <select id="findSubareasByCondition" parameterType="java.util.Map" resultMap="SubareaResultMap">
+        select bc_subarea.ID, bc_subarea.REGION_ID, bc_subarea.ADDRESSKEY, bc_subarea.STARTNUM, bc_subarea.ENDNUM,
+        bc_subarea.SINGLE, bc_subarea.POSITION, bc_region.province, bc_region.city, bc_region.district
+        from bc_subarea inner join bc_region on bc_subarea.region_id = bc_region.id
+        <where>
+            <if test="addresskey !=null and addresskey!='' ">
+                and addresskey like '%'||#{addresskey}||'%'
+            </if>
+            <if test="region != null">
+                <if test="region.province != null and region.province!= '' ">
+                    and province like '%'||#{region.province}||'%'
+                </if>
+                <if test="region.city != null and region.city!= '' ">
+                    and city like '%'||#{region.city}||'%'
+                </if>
+                <if test="region.district != null and region.district!= '' ">
+                    and district like '%'||#{region.district}||'%'
+                </if>
+            </if>
+            <if test="decidedZone!=null">
+                <if test="decidedZone.id != null and decidedZone.id!= ''">
+                    and decidedzone_id = #{decidedZone.id}
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <sql id="Base_Column_List">
+    ID, DECIDEDZONE_ID, REGION_ID, ADDRESSKEY, STARTNUM, ENDNUM, SINGLE, POSITION
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="SubareaResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from BJ0825.BC_SUBAREA
+        where ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 查询未关联分区 ，条件decidedzone_id is null -->
+    <select id="findNoAssociations" resultMap="SubareaResultMap">
+     SELECT * FROM BC_SUBAREA WHERE DECIDEDZONE_ID IS NULL
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from BJ0825.BC_SUBAREA
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="cn.itcast.bos.domain.Subarea">
+    insert into BJ0825.BC_SUBAREA (ID, DECIDEDZONE_ID, REGION_ID, 
+      ADDRESSKEY, STARTNUM, ENDNUM, 
+      SINGLE, POSITION)
+    values (#{id,jdbcType=VARCHAR}, #{decidedZone.id,jdbcType=VARCHAR}, #{region.id,jdbcType=VARCHAR}, 
+      #{addresskey,jdbcType=VARCHAR}, #{startnum,jdbcType=VARCHAR}, #{endnum,jdbcType=VARCHAR}, 
+      #{single,jdbcType=CHAR}, #{position,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="cn.itcast.bos.domain.Subarea">
+        insert into BJ0825.BC_SUBAREA
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="decidedzoneId != null">
+                DECIDEDZONE_ID,
+            </if>
+            <if test="regionId != null">
+                REGION_ID,
+            </if>
+            <if test="addresskey != null">
+                ADDRESSKEY,
+            </if>
+            <if test="startnum != null">
+                STARTNUM,
+            </if>
+            <if test="endnum != null">
+                ENDNUM,
+            </if>
+            <if test="single != null">
+                SINGLE,
+            </if>
+            <if test="position != null">
+                POSITION,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="decidedzoneId != null">
+                #{decidedzoneId,jdbcType=VARCHAR},
+            </if>
+            <if test="regionId != null">
+                #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="addresskey != null">
+                #{addresskey,jdbcType=VARCHAR},
+            </if>
+            <if test="startnum != null">
+                #{startnum,jdbcType=VARCHAR},
+            </if>
+            <if test="endnum != null">
+                #{endnum,jdbcType=VARCHAR},
+            </if>
+            <if test="single != null">
+                #{single,jdbcType=CHAR},
+            </if>
+            <if test="position != null">
+                #{position,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.bos.domain.Subarea">
+        update BJ0825.BC_SUBAREA
+        <set>
+            <if test="decidedzoneId != null">
+                DECIDEDZONE_ID = #{decidedzoneId,jdbcType=VARCHAR},
+            </if>
+            <if test="regionId != null">
+                REGION_ID = #{regionId,jdbcType=VARCHAR},
+            </if>
+            <if test="addresskey != null">
+                ADDRESSKEY = #{addresskey,jdbcType=VARCHAR},
+            </if>
+            <if test="startnum != null">
+                STARTNUM = #{startnum,jdbcType=VARCHAR},
+            </if>
+            <if test="endnum != null">
+                ENDNUM = #{endnum,jdbcType=VARCHAR},
+            </if>
+            <if test="single != null">
+                SINGLE = #{single,jdbcType=CHAR},
+            </if>
+            <if test="position != null">
+                POSITION = #{position,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.itcast.bos.domain.Subarea">
+    update BJ0825.BC_SUBAREA
+    set DECIDEDZONE_ID = #{decidedzoneId,jdbcType=VARCHAR},
+      REGION_ID = #{regionId,jdbcType=VARCHAR},
+      ADDRESSKEY = #{addresskey,jdbcType=VARCHAR},
+      STARTNUM = #{startnum,jdbcType=VARCHAR},
+      ENDNUM = #{endnum,jdbcType=VARCHAR},
+      SINGLE = #{single,jdbcType=CHAR},
+      POSITION = #{position,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
