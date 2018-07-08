@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="BJ0825_BC_DECIDEDZONE" >
-  <resultMap id="BaseResultMap" type="cn.itcast.bos.domain.DecidedZone" >
+<mapper namespace="cn.itcast.bos.dao.DecidedZoneDao" >
+  <resultMap id="DecidedZoneResultMap" type="cn.itcast.bos.domain.DecidedZone" >
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="NAME" property="name" jdbcType="VARCHAR" />
-    <result column="STAFF_ID" property="staffId" jdbcType="VARCHAR" />
+    <!--<result column="STAFF_ID" property="staffId" jdbcType="VARCHAR" />-->
+    <association property="staff" column="staff_id" javaType="Staff" resultMap="cn.itcast.bos.dao.StaffDAO.StaffResultMap"/>
   </resultMap>
   <sql id="Base_Column_List" >
     ID, NAME, STAFF_ID
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="DecidedZoneResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from BJ0825.BC_DECIDEDZONE
@@ -22,7 +23,7 @@
   <insert id="insert" parameterType="cn.itcast.bos.domain.DecidedZone" >
     insert into BJ0825.BC_DECIDEDZONE (ID, NAME, STAFF_ID
       )
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{staffId,jdbcType=VARCHAR}
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{staff.id,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="cn.itcast.bos.domain.DecidedZone" >

@@ -228,4 +228,10 @@
       POSITION = #{position,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+    <update id="assignDecidedZone">
+        UPDATE BJ0825.BC_SUBAREA SET DECIDEDZONE_ID = #{decidedZoneID} WHERE ID IN
+        <foreach collection="subareaID" item="subarea_id" open="(" separator="," close=")">
+            #{subarea_id}
+        </foreach>
+    </update>
 </mapper>

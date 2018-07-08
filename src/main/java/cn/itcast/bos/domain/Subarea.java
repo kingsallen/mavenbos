@@ -83,6 +83,10 @@ public class Subarea {
 		this.position = position == null ? null : position.trim();
 	}
 
+	public String getSubareaId(){
+		return id;
+	}
+
 	@Override
 	public String toString() {
 		return "Subarea [id=" + id + ", addresskey=" + addresskey + ", startnum=" + startnum + ", endnum=" + endnum + ", single=" + single + ", position=" + position + ", decidedZone=" + decidedZone + ", region=" + region + "]";

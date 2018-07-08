@@ -5,7 +5,9 @@ public class DecidedZone {
 
     private String name;
 
-    private String staffId;
+//    private String staffId;
+
+    private Staff staff;
 
     public String getId() {
         return id;
@@ -23,11 +25,11 @@ public class DecidedZone {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getStaffId() {
-        return staffId;
+    public Staff getStaff() {
+        return staff;
     }
 
-    public void setStaffId(String staffId) {
-        this.staffId = staffId == null ? null : staffId.trim();
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
 }

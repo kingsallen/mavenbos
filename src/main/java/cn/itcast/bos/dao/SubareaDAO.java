@@ -16,4 +16,6 @@ public interface SubareaDAO extends BaseDAO<Subarea> {
 	public List<Subarea> findSubareasByCondition(Map<String, Object> condition);
 
     public List<Subarea> findNoAssociations();
+
+    public void assignDecidedZone(String[] subareaId, String id);
 }

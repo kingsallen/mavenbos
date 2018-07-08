@@ -10,6 +10,7 @@ PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN"
 		<typeAlias type="cn.itcast.bos.domain.User" alias="User"/>
 		<typeAlias type="cn.itcast.bos.domain.Region" alias="Region"/>
 		<typeAlias type="cn.itcast.bos.domain.DecidedZone" alias="DecidedZone"/>
+		<typeAlias type="cn.itcast.bos.domain.Staff" alias="Staff"/>
 	</typeAliases>
 	
 	<!-- 引入自定义 mapper 文件 -->
@@ -18,5 +19,6 @@ PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN"
 		<mapper resource="cn/itcast/bos/dao/StaffMapper.xml"/> 
 		<mapper resource="cn/itcast/bos/dao/RegionMapper.xml"/> 
 		<mapper resource="cn/itcast/bos/dao/SubareaMapper.xml"/> 
+		<mapper resource="cn/itcast/bos/dao/DecidedZoneMapper.xml"/> 
 	</mappers>
 </configuration> 
