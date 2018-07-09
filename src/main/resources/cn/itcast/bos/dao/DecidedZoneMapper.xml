@@ -1,69 +1,108 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.itcast.bos.dao.DecidedZoneDao" >
-  <resultMap id="DecidedZoneResultMap" type="cn.itcast.bos.domain.DecidedZone" >
-    <id column="ID" property="id" jdbcType="VARCHAR" />
-    <result column="NAME" property="name" jdbcType="VARCHAR" />
-    <!--<result column="STAFF_ID" property="staffId" jdbcType="VARCHAR" />-->
-    <association property="staff" column="staff_id" javaType="Staff" resultMap="cn.itcast.bos.dao.StaffDAO.StaffResultMap"/>
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="cn.itcast.bos.dao.DecidedZoneDao">
+    <resultMap id="DecidedZoneResultMap" type="cn.itcast.bos.domain.DecidedZone">
+        <id column="ID" property="id" jdbcType="VARCHAR"/>
+        <result column="decidedzonename" property="name" jdbcType="VARCHAR"/>
+        <!--<result column="STAFF_ID" property="staffId" jdbcType="VARCHAR" />-->
+        <association property="staff" column="staff_id" javaType="Staff"
+                     resultMap="cn.itcast.bos.dao.StaffDAO.StaffResultMap"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     ID, NAME, STAFF_ID
   </sql>
-  <select id="selectByPrimaryKey" resultMap="DecidedZoneResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="Base_Column_List" />
-    from BJ0825.BC_DECIDEDZONE
-    where ID = #{id,jdbcType=VARCHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    <select id="selectByPrimaryKey" resultMap="DecidedZoneResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from BJ0825.BC_DECIDEDZONE
+        where ID = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <!--查询总条数-->
+    <select id="findTotalCountByCondition" parameterType="cn.itcast.bos.page.PaginationInfo" resultType="int">
+        SELECT COUNT (*) FROM (
+        SELECT bd.ID, bd.NAME decidedzonename, bst.name,bst.telephone, bst.station FROM BC_DECIDEZONE bd, BC_SUBAREA bs,
+        BC_STAFF bst WHERE bd.STAFF_ID = bst.ID and bs.DECIDEDZONE_ID = bd.ID
+        <if test="condition.id !=null and condition.id != ''">and bd.ID = #{condition.id}
+        </if>
+        <if
+                test="condition.subareaId !=null and condition.subareaId != ''">and bs.ID = #{condition.subareaId}
+        </if>
+        <if test
+                    ="condition.id !=station and condition.station != ''">and bd.ID = #{condition.station}
+        </if>
+        ) t
+    </select>
+
+    <!--分页查询数量-->
+    <select id="findPaginationDataByCondition" parameterType="cn.itcast.bos.page.PaginationInfo"
+            resultMap="DecidedZoneResultMap">
+        SELECT * FROM (
+        SELECT bd.ID, bd.NAME decidedzonename, bst.NAME,bst.TELEPHONE, bst.STATION, rownum RN FROM BC_DECIDEZONE bd,
+        BC_SUBAREA bs,
+        BC_STAFF bst WHERE bd.STAFF_ID = bst.ID and bs.DECIDEDZONE_ID = bd.ID
+        <if test="condition.id !=null and condition.id != ''">
+            and bd.ID = #{condition.id}
+        </if>
+        <if test="condition.subareaId !=null and condition.subareaId != ''">
+            and bs.ID = #{condition.subareaId}
+        </if>
+        <if test="condition.station !=null and condition.station != ''">
+            and bst.station like '%'|| #{condition.station} || '%'
+        </if>
+        <![CDATA[
+      and rownum <= #{last} ) t AND RN > #{first}
+    ]]>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from BJ0825.BC_DECIDEDZONE
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="cn.itcast.bos.domain.DecidedZone" >
+    <insert id="insert" parameterType="cn.itcast.bos.domain.DecidedZone">
     insert into BJ0825.BC_DECIDEDZONE (ID, NAME, STAFF_ID
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{staff.id,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="cn.itcast.bos.domain.DecidedZone" >
-    insert into BJ0825.BC_DECIDEDZONE
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        ID,
-      </if>
-      <if test="name != null" >
-        NAME,
-      </if>
-      <if test="staffId != null" >
-        STAFF_ID,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="staffId != null" >
-        #{staffId,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.bos.domain.DecidedZone" >
-    update BJ0825.BC_DECIDEDZONE
-    <set >
-      <if test="name != null" >
-        NAME = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="staffId != null" >
-        STAFF_ID = #{staffId,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where ID = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="cn.itcast.bos.domain.DecidedZone" >
+    <insert id="insertSelective" parameterType="cn.itcast.bos.domain.DecidedZone">
+        insert into BJ0825.BC_DECIDEDZONE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="name != null">
+                NAME,
+            </if>
+            <if test="staffId != null">
+                STAFF_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="staffId != null">
+                #{staffId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.bos.domain.DecidedZone">
+        update BJ0825.BC_DECIDEDZONE
+        <set>
+            <if test="name != null">
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="staffId != null">
+                STAFF_ID = #{staffId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.itcast.bos.domain.DecidedZone">
     update BJ0825.BC_DECIDEDZONE
     set NAME = #{name,jdbcType=VARCHAR},
       STAFF_ID = #{staffId,jdbcType=VARCHAR}

@@ -3,6 +3,7 @@ package cn.itcast.bos.service.impl;
 import cn.itcast.bos.dao.DecidedZoneDao;
 import cn.itcast.bos.dao.SubareaDAO;
 import cn.itcast.bos.domain.DecidedZone;
+import cn.itcast.bos.page.PaginationInfo;
 import cn.itcast.bos.service.DecidedZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class DecidedZoneServiceImpl implements DecidedZoneService {
     public void saveDecidedZone(DecidedZone decidedZone, String[] subareaId) {
         decidedZoneDao.insert(decidedZone);
         subareaDAO.assignDecidedZone(subareaId, decidedZone.getId());
+    }
+
+    public void pageQuery(PaginationInfo<DecidedZone> paginationInfo) {
+        paginationInfo.setTotal(decidedZoneDao.findTotalCountByCondition(paginationInfo));
+        paginationInfo.setRows(decidedZoneDao.findPaginationDataByCondition(paginationInfo));
     }
 }

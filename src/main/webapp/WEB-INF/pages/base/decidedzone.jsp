@@ -27,7 +27,26 @@
 	src="${pageContext.request.contextPath }/js/easyui/locale/easyui-lang-zh_CN.js"
 	type="text/javascript"></script>
 <script type="text/javascript">
-	function doAdd(){
+    // 自定义Jquery函数，完成form数据 转换 json对象格式
+    $.fn.serializeJson=function(){
+        var serializeObj={};
+        var array=this.serializeArray();
+        var str=this.serialize();
+        $(array).each(function(){
+            if(serializeObj[this.name]){
+                if($.isArray(serializeObj[this.name])){
+                    serializeObj[this.name].push(this.value);
+                }else{
+                    serializeObj[this.name]=[serializeObj[this.name],this.value];
+                }
+            }else{
+                serializeObj[this.name]=this.value;
+            }
+        });
+        return serializeObj;
+    };
+
+    function doAdd(){
 		$('#addDecidedzoneWindow').window("open");
 	}
 	
@@ -125,11 +144,11 @@
 			pageList: [30,50,100],
 			pagination : true,
 			toolbar : toolbar,
-			url : "${pageContext.request.contextPath}/json/decidedzone.json",
+			url : "${pageContext.request.contextPath}/decidedZone_pageQuery.do",
 			idField : 'id',
 			columns : columns,
 			onDblClickRow : doDblClickRow,
-			method : 'get'
+			method : 'post'
 		});
 
 		// 添加、修改定区
@@ -154,11 +173,13 @@
 	        resizable:false
 	    });
 		$("#btn").click(function(){
-			alert("执行查询...");
+			var params = $('#searchForm').serializeJson();
+			$('#grid').datagrid('load', params);
 		});
         $('#save').click(function () {
             if($('#decideZoneForm').form('validate')){
                 $('#decideZoneForm').submit();
+                $('#searchWindow').window('close');
 			}
         });
 	});
@@ -324,7 +345,7 @@
 	<!-- 查询定区 -->
 	<div class="easyui-window" title="查询定区窗口" id="searchWindow" collapsible="false" minimizable="false" maximizable="false" style="top:20px;left:200px">
 		<div style="overflow:auto;padding:5px;" border="false">
-			<form>
+			<form id="searchForm" method="post" action="">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="2">查询条件</td>
@@ -335,11 +356,11 @@
 					</tr>
 					<tr>
 						<td>所属单位</td>
-						<td><input type="text" name="staff.station" class="easyui-validatebox" required="true"/></td>
+						<td><input type="text" name="station" class="easyui-validatebox" required="true"/></td>
 					</tr>
 					<tr>
 						<td>是否关联分区</td>
-						<td><input type="text" name="subareaName" class="easyui-validatebox" required="true"/></td>
+						<td><input type="text" name="subareaId" class="easyui-validatebox" required="true"/></td>
 					</tr>
 					<tr>
 						<td colspan="2"><a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a> </td>
