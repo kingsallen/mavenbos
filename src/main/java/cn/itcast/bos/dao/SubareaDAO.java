@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.itcast.bos.domain.Subarea;
+import org.apache.ibatis.annotations.Param;
 
 public interface SubareaDAO extends BaseDAO<Subarea> {
 
@@ -17,5 +18,5 @@ public interface SubareaDAO extends BaseDAO<Subarea> {
 
     public List<Subarea> findNoAssociations();
 
-    public void assignDecidedZone(String[] subareaId, String id);
+    public void assignDecidedZone(@Param("subareaID")String[] subareaId, @Param("decidedZoneID")String decidedZoneID);
 }

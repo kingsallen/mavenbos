@@ -105,7 +105,7 @@
 	// 定义列
 	var columns = [ [ {
 		field : 'id',
-		checkbox : true,
+		checkbox : true
 	}, {
 		field : 'showid',
 		title : '分拣编号',
@@ -157,8 +157,20 @@
 		field : 'single',
 		title : '单双号',
 		width : 100,
-		align : 'center'
-	} , {
+		align : 'center',
+        formatter: function(value,row,index){
+            if (value ==='0'){
+                return '单双号';
+            }
+            if (value ==='1'){
+                return '单号';
+            }
+            if (value ==='2'){
+                return '双号';
+            }
+
+        }
+    } , {
 		field : 'position',
 		title : '位置',
 		width : 200,
