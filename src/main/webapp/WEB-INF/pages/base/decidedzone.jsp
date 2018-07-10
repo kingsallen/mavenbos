@@ -175,6 +175,7 @@
 		$("#btn").click(function(){
 			var params = $('#searchForm').serializeJson();
 			$('#grid').datagrid('load', params);
+			$('#searchWindow').window('close');
 		});
         $('#save').click(function () {
             if($('#decideZoneForm').form('validate')){
