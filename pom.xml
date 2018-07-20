@@ -123,6 +123,18 @@
 			<artifactId>poi</artifactId>
 			<version>3.9</version>
 		</dependency>
+	  <!-- https://mvnrepository.com/artifact/org.json/json -->
+	  <dependency>
+		  <groupId>org.json</groupId>
+		  <artifactId>json</artifactId>
+		  <version>20180130</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>com.caucho</groupId>
+		  <artifactId>hessian</artifactId>
+		  <version>4.0.33</version>
+	  </dependency>
+
   </dependencies>
   <build>
   	<plugins>

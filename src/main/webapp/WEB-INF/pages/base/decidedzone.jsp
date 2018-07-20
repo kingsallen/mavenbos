@@ -63,6 +63,28 @@
 	}
 	
 	function doAssociations(){
+        //先选择定区才能关联
+		if(!$('#grid').datagrid('getSelected')){
+		    $.messager.alert('警告', '请选择要关联的定区！', 'warning');
+		    return;
+		}
+
+		//加载之前先清空
+		$('#noassociationSelect').empty();
+		$('#associationSelect').empty();
+		//加载未关联的定区
+		$.post('${pageContext.request.contextPath}/decidedzone_findnoassociationCustomers.do',function (data) {
+			$(data).each(function () {
+				$('<option value="'+this.id+'">'+this.name+'('+this.address+')</option>').appendTo($('#noassociationSelect'));
+        	});
+		});
+		//加载已关联的定区
+		$.post('${pageContext.request.contextPath}/decidedzone_findhasassociationCustomers.do',{decidedzoneid:$('#grid').datagrid('getSelected').id}, function (data) {
+		    $(data).each(function () {
+ 	           $('<option value="'+this.id+'">'+this.name+'('+this.address+')</option>').appendTo($('#associationSelect'));
+            });
+        });
+
 		$('#customerWindow').window('open');
 	}
 	
@@ -148,6 +170,7 @@
 			idField : 'id',
 			columns : columns,
 			onDblClickRow : doDblClickRow,
+            singleSelect : true,
 			method : 'post'
 		});
 
@@ -182,6 +205,23 @@
                 $('#decideZoneForm').submit();
                 $('#searchWindow').window('close');
 			}
+        });
+        //左右选中效果
+        $('#toRight').click(function () {
+			$('#noassociationSelect option:selected').appendTo($('#associationSelect'));
+        });
+        $('#toLeft').bind('click',function () {
+			$('#associationSelect option:selected').appendTo('#noassociationSelect');
+        });
+        //关联客户操作
+        $('#associationBtn').click(function () {
+            //选中所有option
+			$('#associationSelect option').attr('selected','true');
+			var l =$('#associationSelect option:selected');
+			//为隐藏定区id赋值
+			$('#customerDecidedZoneId').val($('#grid').datagrid('getSelected').id);
+			$('#customerForm').submit();
+
         });
 	});
 
@@ -374,7 +414,7 @@
 	<!-- 关联客户窗口 -->
 	<div class="easyui-window" title="关联客户窗口" id="customerWindow" collapsible="false" closed="true" minimizable="false" maximizable="false" style="top:20px;left:200px;width: 400px;height: 300px;">
 		<div style="overflow:auto;padding:5px;" border="false">
-			<form id="customerForm" action="${pageContext.request.contextPath }/decidedzone_assigncustomerstodecidedzone.action" method="post">
+			<form id="customerForm" action="${pageContext.request.contextPath }/decidedzone_assigncustomerstodecidedzone.do" method="post">
 				<table class="table-edit" width="80%" align="center">
 					<tr class="title">
 						<td colspan="3">关联客户</td>

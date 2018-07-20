@@ -58,5 +58,10 @@
 	<aop:config>
 		<aop:advisor advice-ref="transactionAdvice" pointcut="execution(* cn.itcast.bos.service..*.*(..))"/>
 	</aop:config>
+	<!--配置hessian客户端-->
+	<bean id="customerService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl" value="${hessianServiceUrl}"/>
+		<property name="serviceInterface" value="cn.itcast.bos.service.CustomerService" />
+	</bean>
 	
 </beans>	
